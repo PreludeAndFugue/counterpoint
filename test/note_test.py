@@ -1,5 +1,5 @@
 import unittest
-from music.music import Note
+from counterpoint.counterpoint import Note
 
 class TestNoteCreation(unittest.TestCase):
     def setUp(self):

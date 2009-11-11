@@ -1,5 +1,5 @@
 import unittest
-from music.music import Rest
+from counterpoint.counterpoint import Rest
 
 class TestRestCreation(unittest.TestCase):
     def setUp(self):
