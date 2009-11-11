@@ -3,36 +3,26 @@ from music.music import Rest
 
 class TestRestCreation(unittest.TestCase):
     def setUp(self):
-        self.r16 = Rest(16)
-        self.r32 = Rest(32)
-        self.r1 = Rest(1)
+        self.test_cases = ((1, 'Rest(1)', 'hemi-demi-semiquaver rest'),
+                           (2, 'Rest(2)', 'demi-semiquaver rest'),
+                           (4, 'Rest(4)', 'semiquaver rest'),
+                           (8, 'Rest(8)', 'quaver rest'),
+                           (16, 'Rest(16)', 'crotchet rest'))
         
-    def test_repr_16(self):
-        self.assertEqual(repr(self.r16), 'Rest(16)')
+    def test_repr(self):
+        """Test the result of calling __repr__"""
+        for duration, repr_, _ in self.test_cases:
+            self.assertEqual(repr(Rest(duration)), repr_)
         
-    def test_repr_32(self):
-        self.assertEqual(repr(self.r32), 'Rest(32)')
+    def test_str(self):
+        """Test the result of calling __str__"""
+        for duration, _, str_ in self.test_cases:
+            self.assertEqual(str(Rest(duration)), str_)
         
-    def test_repr_1(self):
-        self.assertEqual(repr(self.r1), 'Rest(1)')
-        
-    def test_str_16(self):
-        self.assertEqual(str(self.r16), 'crotchet rest')
-    
-    def test_str_32(self):
-        self.assertEqual(str(self.r32), 'minim rest')
-        
-    def test_str_11(self):
-        self.assertEqual(str(self.r1), 'hemi-demi-semiquaver rest')
-        
-    def test_duration_16(self):
-        self.assertEqual(self.r16.duration, 16)
-        
-    def test_duration_32(self):
-        self.assertEqual(self.r32.duration, 32)
-        
-    def test_duration_11(self):
-        self.assertEqual(self.r1.duration, 1)
+    def test_duration(self):
+        """Test the result of calling Rest.duration."""
+        for duration_, _, _ in self.test_cases:
+            self.assertEqual(Rest(duration_).duration, duration_)
         
 if __name__ == '__main__':
     unittest.main()

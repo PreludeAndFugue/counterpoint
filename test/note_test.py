@@ -3,39 +3,44 @@ from music.music import Note
 
 class TestNoteCreation(unittest.TestCase):
     def setUp(self):
-        self.c = Note('C')
-        self.dsharp = Note('D', 'sharp', 5, 2)
-        self.eflat = Note('E', 'flat', 3, 8)
+        self.note_args = [(('C'), ('C', 'C', 'natural', 4, 16)),
+                          (('D', 'sharp', 5, 2), ('D#', 'D', 'sharp', 5, 2)),
+                          (('E', 'flat', 3, 8), ('Eb', 'E', 'flat', 3, 8)),
+                          (('F', 'natural', 6, 16), ('F', 'F', 'natural', 6, 16)),
+                          (('G', 'sharp', 2, 32), ('G#', 'G', 'sharp', 2, 32)),
+                          (('A', 'flat', 1, 64), ('Ab', 'A', 'flat', 1, 64))]
+        self.notes = [(Note(*args), results) for args, results in self.note_args]
         
-    def test_str_c(self):
-        self.assertEqual(str(self.c), 'C')
-        
-    def test_str_d(self):
-        self.assertEqual(str(self.dsharp), 'D#')
-        
-    def test_str_e(self):
-        self.assertEqual(str(self.eflat), 'Eb')
+    def test_str(self):
+        """Test the result of calling __str__."""
+        for note, results in self.notes:
+            self.assertEqual(str(note), results[0])
         
     def test_repr(self):
-        pass
+        """Test the result of calling __repr__."""
+        for note, results in self.notes:
+            note_repr = 'Note("%s", "%s", %s, %s)' % results[1:]
+            self.assertEqual(repr(note), note_repr)
         
-    def test_octave_c(self):
-        self.assertEqual(self.c.octave, 4)
-    
-    def test_octave_d(self):
-        self.assertEqual(self.dsharp.octave, 5)
+    def test_octave(self):
+        """Test the result of calling Note.octave."""
+        for note, results in self.notes:
+            self.assertEqual(note.octave, results[3])
         
-    def test_octave_e(self):
-        self.assertEqual(self.eflat.octave, 3)
-        
-    def test_duration_c(self):
-        self.assertEqual(self.c.duration, 16)
-        
-    def test_duration_d(self):
-        self.assertEqual(self.dsharp.duration, 2)
-        
-    def test_duration_e(self):
-        self.assertEqual(self.eflat.duration, 8)
+    def test_duration(self):
+        """Test the result of calling Note.duration."""
+        for note, results in self.notes:
+            self.assertEqual(note.duration, results[4])
+            
+    def test_accidental(self):
+        """Test the result of calling Note.accidental."""
+        for note, results in self.notes:
+            self.assertEqual(note.accidental, results[2])
+            
+    def test_name(self):
+        """Test the result of calling Note.name."""
+        for note, results in self.notes:
+            self.assertEqual(note.name, results[1])
         
 if __name__ == '__main__':
     unittest.main()

@@ -42,7 +42,7 @@ class Note(object):
         return ''.join((self.name, self.acc[self.accidental]))
         
     def __repr__(self):
-        return 'Note(name=%s, accidental=%s, octave=%s, duration=%s)' % (
+        return 'Note("%s", "%s", %s, %s)' % (
             self.name, self.accidental, self.octave, self.duration)
         
 def interval(note1, note2):
