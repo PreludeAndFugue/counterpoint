@@ -1,4 +1,5 @@
-
+# TODO: the durations need to be changed to take account of triplets.
+# Multiplying all durations by three should work. So crotchet = 48.
 DURATION_NAMES = {1: 'hemi-demi-semiquaver',
                   2: 'demi-semiquaver',
                   4: 'semiquaver',
