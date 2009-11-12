@@ -73,6 +73,11 @@ class Note(object):
 
 class Interval(object):
     """A musical interval."""
+    
+    name_position = {'C': 1, 'D': 3, 'E': 5, 'F': 6,
+                     'G': 8, 'A': '10', 'B': 12}
+    acc_add = {'natural': 0, 'sharp': 1, 'flat': -1}
+    
     def __init__(self, note1, note2):
         self.lower_note, self.upper_note = self._order_notes(note1, note2)
         self.number = self._number()
@@ -91,16 +96,14 @@ class Interval(object):
         For internal purposes only - the implementation may change. However,
         the relative position of two notes should always be equal.
         """
-        name_position = {'C': 1, 'D': 3, 'E': 5, 'F': 6,
-                         'G': 8, 'A': '10', 'B': 12}
-        acc_add = {'natural': 0, 'sharp' 1, 'flat': -1}
-        return name_position[note.name] + 7*note.octave + acc_add[note.accidental]
+        return (self.name_position[note.name] + 7*note.octave
+                + self.acc_add[note.accidental])
         
     def _number(self):
         """Calculate the interval number."""
         octave_diff = self.upper_note.octave - self.lower_note.octave
-        scale_diff = ord(self.upper_note.name) - ord(sef.lower_note.name)
-        return scale_diff + 7*octave_diff
+        scale_diff = ord(self.upper_note.name) - ord(self.lower_note.name)
+        return scale_diff + 7*octave_diff + 1
         
     def _quality(self):
         """Calculate the quality of the interval."""
