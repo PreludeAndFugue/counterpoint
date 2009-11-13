@@ -10,6 +10,7 @@ class TestInterval(unittest.TestCase):
         self.eflat4 = Note('E', 'flat')
         self.e4 = Note('E')
         self.b4 = Note('B')
+        self.bsharp4 = Note('B', 'sharp')
         self.c5 = Note('C', 'natural', 5)
         self.c5flat = Note('C', 'flat', 5)
         # Seconds
@@ -20,11 +21,12 @@ class TestInterval(unittest.TestCase):
         self.i3 = Interval(self.eflat4, self.c4)
         # Fifths
         self.i5 = Interval(self.e4, self.b4)
+        self.i5a = Interval(self.e4, self.bsharp4)
         # Sixths
         self.i6 = Interval(self.eflat4, self.c5)
         # Octaves
         self.i8 = Interval(self.c4, self.c5)
-        #self.i8a = Interval(self.c4, self.c5flat)
+        self.i8a = Interval(self.c4, self.c5flat)
         
     def test_order_equal(self):
         """Test that the notes in an interval are ordered correctly by
@@ -47,9 +49,10 @@ class TestInterval(unittest.TestCase):
         """Test the number of an interval."""
         self.assertEqual(self.i2.number, 2)
         self.assertEqual(self.i2a.number, 2)
-        self.assertEqual(self.i8.number, 8)
         self.assertEqual(self.i2b.number, 2)
+        self.assertEqual(self.i5a.number, 5)
         self.assertEqual(self.i6.number, 6)
+        self.assertEqual(self.i8.number, 8)
 
     def test_quality(self):
         """Test the quality of an interval."""
@@ -57,7 +60,8 @@ class TestInterval(unittest.TestCase):
         self.assertEqual(self.i2a.quality, 'major')
         self.assertEqual(self.i2b.quality, 'minor')
         self.assertEqual(self.i5.quality, 'perfect')
-        #self.assertEqual(self.i8a.quality, 'diminished')
+        self.assertEqual(self.i5a.quality, 'augmented')
+        self.assertEqual(self.i8a.quality, 'diminished')
         
 if __name__ == '__main__':
     unittest.main()
