@@ -50,6 +50,7 @@ class TestInterval(unittest.TestCase):
         self.assertEqual(self.i2.number, 2)
         self.assertEqual(self.i2a.number, 2)
         self.assertEqual(self.i2b.number, 2)
+        self.assertEqual(self.i3.number, 3)
         self.assertEqual(self.i5a.number, 5)
         self.assertEqual(self.i6.number, 6)
         self.assertEqual(self.i8.number, 8)
@@ -59,9 +60,14 @@ class TestInterval(unittest.TestCase):
         self.assertEqual(self.i2.quality, 'major')
         self.assertEqual(self.i2a.quality, 'major')
         self.assertEqual(self.i2b.quality, 'minor')
+        self.assertEqual(self.i3.quality, 'minor')
         self.assertEqual(self.i5.quality, 'perfect')
         self.assertEqual(self.i5a.quality, 'augmented')
         self.assertEqual(self.i8a.quality, 'diminished')
+        
+    def test_str(self):
+        """Test the __str__ method."""
+        
         
 if __name__ == '__main__':
     unittest.main()

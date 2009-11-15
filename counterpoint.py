@@ -108,7 +108,10 @@ class Interval(object):
         self.quality = self._quality()
         
     def __str__(self):
-        return '%s %s' % (self.quality, self.number)
+        return '%s %s' % (self.quality, card_to_ord(self.number))
+        
+    def __repr__(self):
+        pass
         
     def _order_notes(self, note1, note2):
         """Return the notes in order with the lowest note first."""
@@ -139,6 +142,30 @@ class Interval(object):
         """Invert the interval."""
         raise NotImplemented
 
+# some helper functions
+def card_to_ord(n):
+    """Return a string which will turn a cardinal number into an ordinal number.
+    
+    >>> card_to_ord(10)
+    10th
+    >>> card_to_ord(1)
+    1st
+    >>> card_to_ord(2)
+    2nd
+    >>> card_to_ord(12)
+    12th
+    >>> card_to_ord(55)
+    55th
+    """
+    final_digit = n%10
+    if final_digit in (1, 2, 3):
+        if n%100 in (11, 12, 13):
+            return str(n) + 'th'
+        else:
+            ending = {1: 'st', 2: 'nd', 3: 'rd'}
+            return str(n) + ending[final_digit]
+    else:
+        return str(n) + 'th'
 
 def main():
     n1 = Note('F', 5)
