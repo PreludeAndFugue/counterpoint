@@ -1,5 +1,3 @@
-import math
-
 # TODO: the durations need to be changed to take account of triplets.
 # Multiplying all durations by three should work. So crotchet = 48.
 DURATION_NAMES = {1: 'hemi-demi-semiquaver',
@@ -13,24 +11,49 @@ DURATION_NAMES = {1: 'hemi-demi-semiquaver',
                   48: 'dotted minim',
                   64: 'semibreve',
                   128: 'breve'}
+
+class FirstSpeciesError(Exception):
+    """Base class for all errors dedected by the First Species checker."""
+    pass
+        
                   
 class FirstSpecies(object):
-    """Check the correctness of some first species counterpoint."""
-    def __init__(self):
-        self.cantus_firmus = None
-        self.counter_melody = None
-        self.intervals = None
-        self.results = None
+    """Check the correctness of first species counterpoint."""
+    def __init__(self, cantus_firmus, counter_melody):
+        self.cantus_firmus = cantus_firmus
+        self.counter_melody = counter_melody
+        self.intervals = self._create_intervals()
+        self.results = []
         
     def _create_intervals(self):
-        """Create a list of interval objects by comparing the cantus firmus
+        """Return a list of interval objects by comparing the cantus firmus
         with the counter melody."""
-        self.interval = [Interval(note_cf, note_cm) for note_cf, note_cm
+        return [Interval(note_cf, note_cm) for note_cf, note_cm
                         in zip(self.cantus_firmus, self.counter_melody)]
                         
     def check(self):
-        """The main method for checking the first species counterpoint."""
-        pass
+        """The main method for checking the first species counterpoint.
+        
+        This method calls all the '_rule_*' methods saving the results in """
+        rules = [self._rule_first_last_interval]
+        for rule in rules:
+            rule()
+        
+    def _rule_first_last_interval(self):
+        """The first and last intervals should only be a unison, fifth or
+        octave.
+        """
+        correct_intervals = (1, 5, 8)
+        if self.intervals[0].number not in correct_intervals:
+            self.results.append(FirstSpeciesError('The counterpoint must begin '
+                'with a unison, fifth or octave.'))
+        if self.intervals[-1].number not in correct_intervals:
+            self.results.append(FirstSpeciesError('The counterpoint must end '
+                'with a unison, fifth or octave.'))
+        
+    def pretty(self):
+        """A prettified string of the counterpoint."""
+        return [str(i) for i in self.intervals]
         
     def print_results(self):
         """Print the results."""
@@ -74,18 +97,26 @@ class Note(object):
         http://en.wikipedia.org/wiki/Note#Note_designation_in_accordance_with_octave_name
         """
         return (12*(self.octave + 1)
-                + self.name_number[self.name]
-                + self.acc_number[self.accidental])
+                + Note.name_number[self.name]
+                + Note.acc_number[self.accidental])
         
     def add_interval(self, interval=5):
+        """Return a new Note object created from the current note with the added
+        interval."""
         pass
         
     def __str__(self):
-        return ''.join((self.name, str(self.octave), self.acc_print[self.accidental]))
+        return ''.join((self.name, str(self.octave), Note.acc_print[self.accidental]))
         
     def __repr__(self):
         return 'Note("%s", "%s", %s, %s)' % (
             self.name, self.accidental, self.octave, self.duration)
+            
+    def __eq__(self, other_note):
+        """Two notes are identical if their attributes are identical."""
+        return (self.name, self.accidental, self.octave, self.duration) == (
+                other_note.name, other_note.accidental, other_note.octave,
+                other_note.duration)
 
 
 class Interval(object):
@@ -108,10 +139,18 @@ class Interval(object):
         self.quality = self._quality()
         
     def __str__(self):
-        return '%s %s' % (self.quality, card_to_ord(self.number))
+        return '%s %s between %s and %s' % (self.quality,
+                                            card_to_ord(self.number),
+                                            str(self.lower_note),
+                                            str(self.upper_note))
         
     def __repr__(self):
-        pass
+        return 'Interval(%s, %s)' % (repr(self.lower_note), repr(self.upper_note))
+        
+    def __eq__(self, other):
+        """Testing the equality of two intervals."""
+        return (self.lower_note, self.upper_note, self.number, self.quality) == (
+                other.lower_note, other.upper_note, other.number, other.quality)
         
     def _order_notes(self, note1, note2):
         """Return the notes in order with the lowest note first."""
@@ -121,14 +160,20 @@ class Interval(object):
             return note2, note1
         
     def _number(self):
-        """Calculate the interval number."""
+        """Calculate the interval number.
+        
+        http://en.wikipedia.org/wiki/Interval_%28music%29#Number
+        """
         octave_diff = self.upper_note.octave - self.lower_note.octave
         scale_diff = (self.name_number[self.upper_note.name]
                       - self.name_number[self.lower_note.name])
         return scale_diff + 7*octave_diff + 1
         
     def _quality(self):
-        """Calculate the quality of the interval."""
+        """Calculate the quality of the interval.
+        
+        http://en.wikipedia.org/wiki/Interval_%28music%29#Quality
+        """
         key_1 = self.number % 7
         key_1 = key_1 if key_1 else 7
         key_2 = (self.upper_note.midi_number - self.lower_note.midi_number) % 12
