@@ -189,7 +189,8 @@ class Interval(object):
 
 # some helper functions
 def card_to_ord(n):
-    """Return a string which will turn a cardinal number into an ordinal number.
+    """Return a string which will turn a cardinal number (integer) into an
+    ordinal number.
     
     >>> card_to_ord(10)
     10th
@@ -203,15 +204,11 @@ def card_to_ord(n):
     55th
     """
     final_digit = n%10
-    if final_digit in (1, 2, 3):
-        if n%100 in (11, 12, 13):
-            return str(n) + 'th'
-        else:
-            ending = {1: 'st', 2: 'nd', 3: 'rd'}
-            return str(n) + ending[final_digit]
-    else:
-        return str(n) + 'th'
-
+    ending = {1: 'st', 2: 'nd', 3: 'rd'}
+    if final_digit in (1, 2, 3) and n%100 not in (11, 12, 13):
+        return '%s%s' % (n, ending[final_digit])
+    return '%sth' % n
+    
 def main():
     n1 = Note('F', 5)
     n2 = Note('C')

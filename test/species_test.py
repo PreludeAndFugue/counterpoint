@@ -24,7 +24,7 @@ class TestFirstSpecies(unittest.TestCase):
         self.assertEqual(fs1.results, [])
         
     def test_first_interval_incorrect(self):
-        fs2 = FirstSpecies([b, g, c], [c5, b, c5])
+        fs2 = FirstSpecies([c, g, c], [b, b, c5])
         fs2.check()
         self.assertEqual(str(fs2.results[0]),
                          str(FirstSpeciesError('The counterpoint must begin with a'
