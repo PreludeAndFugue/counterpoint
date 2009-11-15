@@ -23,7 +23,8 @@ def print_problems(problems, error_header):
         print
 
 def main():
-    module_names = ['rest_test', 'note_test', 'interval_test', 'species_test']
+    module_names = ['rest_test', 'note_test', 'interval_test', 'species_test',
+                    'function_test']
 
     suite = unittest.TestLoader().loadTestsFromNames(module_names)
     print 'Number of tests: %s' % suite.countTestCases()

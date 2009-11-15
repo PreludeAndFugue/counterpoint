@@ -27,6 +27,9 @@ class TestInterval(unittest.TestCase):
         # Octaves
         self.i8 = Interval(self.c4, self.c5)
         self.i8a = Interval(self.c4, self.c5flat)
+        # A list of all the intervals
+        self.intervals = [self.i2, self.i2a, self.i2b, self.i3, self.i5, self.i5a,
+                          self.i6, self.i8, self.i8a]
         
     def test_order_equal(self):
         """Test that the notes in an interval are ordered correctly by
@@ -67,6 +70,14 @@ class TestInterval(unittest.TestCase):
         
     def test_str(self):
         """Test the __str__ method."""
+        pass
+        
+    def test_repr(self):
+        """Test the __repr__ method."""
+        for interval in self.intervals:
+            repr_call = 'Interval(%s, %s)' % (repr(interval.lower_note),
+                                              repr(interval.upper_note))
+            self.assertEqual(repr(interval), repr_call)
         
         
 if __name__ == '__main__':

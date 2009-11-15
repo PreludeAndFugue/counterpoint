@@ -49,6 +49,21 @@ class TestNoteCreation(unittest.TestCase):
         for note, results in self.notes:
             note_repr = 'Note("%s", "%s", %s, %s)' % results[1:-1]
             self.assertEqual(repr(note), note_repr)
+            
+    def test_eq(self):
+        """Test notes for equality by calling __eq__."""
+        c1 = Note('C')
+        c2 = Note('C')
+        c3 = Note('C', 'natural', 5)
+        d = Note('D')
+        self.assertEqual(c1, c2)
+        self.assertNotEqual(c1, c3)
+        self.assertNotEqual(c1, d)
+        self.assertEqual(c2, c1)
+        self.assertNotEqual(c3, c1)
+        self.assertNotEqual(d, c1)
+        
+        
         
 if __name__ == '__main__':
     unittest.main()
