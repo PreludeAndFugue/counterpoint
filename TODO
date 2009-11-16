@@ -1,0 +1,5 @@
+The durations in DURATION_NAMES need to be changed to take account of triplets.
+Multiplying all durations by three should work. So crotchet = 48.
+
+Modify Interval class so that it can handle melodic intervals. Create new
+boolean parameter 'harmonic' with default value False.
