@@ -2,6 +2,7 @@ import unittest
 from counterpoint.counterpoint import (FirstSpecies, Note, Interval,
                                        FirstSpeciesError)
 
+b3 = Note('B', octave=3)
 c, d, e, f, g, a, b = [Note(name) for name in ('C', 'D', 'E', 'F', 'G', 'A', 'B')]
 c5, d5, e5, f5 = [Note(name, octave=5) for name in ('C', 'D', 'E', 'F')]
 c5sharp = Note('C', 'sharp', 5)
@@ -11,31 +12,47 @@ class TestFirstSpecies(unittest.TestCase):
         """Create two melodic lines."""
         self.cf = [d, f, g, f, e, d]
         self.cm = [d5, a, b, d5, c5sharp, d5]
+        self.fs = FirstSpecies(self.cf, self.cm)
+        self.fs.check()
+        
+    def test_check_all(self):
+        self.assertEqual(self.fs.results, [])
         
     def test_create_intervals(self):
         intervals = [Interval(cf, cm) for cf, cm in zip(self.cf, self.cm)]
-        fs = FirstSpecies(self.cf, self.cm)
-        self.assertEqual(fs.intervals, intervals)
+        self.assertEqual(self.fs.intervals, intervals)
         
     def test_first_interval_correct(self):
         """The first interval must be a unison, fifth or octave."""
-        fs1 = FirstSpecies([c, g, c], [c5, b, c5])
-        fs1.check()
-        self.assertEqual(fs1.results, [])
+        fs = FirstSpecies([c, g, c], [c5, b, c5])
+        fs.check()
+        self.assertEqual(fs.results, [])
         
     def test_first_interval_incorrect(self):
-        fs2 = FirstSpecies([c, g, c], [b, b, c5])
-        fs2.check()
-        self.assertEqual(str(fs2.results[0]),
+        fs = FirstSpecies([c, g, c], [b, b, c5])
+        fs.check()
+        self.assertEqual(str(fs.results[0]),
                          str(FirstSpeciesError('The counterpoint must begin with a'
                             ' unison, fifth or octave.')))
                             
     def test_last_interval_incorrect(self):
-        fs2 = FirstSpecies([c, g, c], [c5, b, a])
-        fs2.check()
-        self.assertEqual(str(fs2.results[0]),
+        fs = FirstSpecies([c, g, c], [c5, b, a])
+        fs.check()
+        self.assertEqual(str(fs.results[0]),
                          str(FirstSpeciesError('The counterpoint must end with a'
                             ' unison, fifth or octave.')))
+                            
+    def test_unisons_correct(self):
+        fs = FirstSpecies([c, b3, c], [c, d, c])
+        fs.check()
+        self.assertEqual(fs.results, [])
+        
+    def test_unisons_incorrect(self):
+        fs = FirstSpecies([c, d, c], [c, d, c])
+        fs.check()
+        self.assertEqual(str(fs.results[0]),
+                         str(FirstSpeciesError('Only the first and last '
+                             'intervals may contain a unison')))
         
 if __name__ == '__main__':
     unittest.main()

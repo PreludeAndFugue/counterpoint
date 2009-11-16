@@ -35,7 +35,8 @@ class FirstSpecies(object):
         """The main method for checking the first species counterpoint.
         
         This method calls all the '_rule_*' methods saving the results in """
-        rules = [self._rule_first_last_interval]
+        rules = [self._rule_first_last_interval,
+                 self._rule_unisons]
         for rule in rules:
             rule()
         
@@ -50,6 +51,14 @@ class FirstSpecies(object):
         if self.intervals[-1].number not in correct_intervals:
             self.results.append(FirstSpeciesError('The counterpoint must end '
                 'with a unison, fifth or octave.'))
+                
+    def _rule_unisons(self):
+        """Only the first and last intervals may be unisons."""
+        intervals = self.intervals[1:-1]
+        for interval in intervals:
+            if interval.number == 1:
+                self.results.append(FirstSpeciesError('Only the first and last '
+                    'intervals may contain a unison'))
         
     def pretty(self):
         """A prettified string of the counterpoint."""
