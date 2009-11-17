@@ -130,6 +130,8 @@ class Note(object):
 
 class Interval(object):
     """A musical interval.
+    
+    An interval can be either harmonic (vertical) or melodic (horizontal).
     """
     name_number = {'C': 1, 'D': 2, 'E': 3, 'F': 4,
                      'G': 5, 'A': 6, 'B': 7}
@@ -142,10 +144,14 @@ class Interval(object):
                  6: {8: 'minor', 9: 'major', 10: 'augmented'},
                  7: {10: 'minor', 11: 'major'}}
     
-    def __init__(self, note1, note2):
+    def __init__(self, note1, note2, harmonic=True):
         self.lower_note, self.upper_note = self._order_notes(note1, note2)
+        self.first_note = note1
+        self.second_note = note2
+        self.harmonic = harmonic
         self.number = self._number()
         self.quality = self._quality()
+        self.direction = self._direction()
         
     def __str__(self):
         return '%s %s between %s and %s' % (self.quality,
@@ -191,6 +197,19 @@ class Interval(object):
             # this is a hack to account for diminished octaves, fifteenths, etc.
             key_2 = -1
         return self.qualities[key_1][key_2]
+        
+    def _direction(self):
+        """Calculate the direction of the interval. Used for melodic intervals.
+        
+        If the second note is higher than the first, then the direction is 'u'.
+        If the second note is lower, then 'd'.
+        Otherwise 'l' (for level)
+        """
+        if self.second_note.midi_number > self.first_note.midi_number:
+            return 'u'
+        if self.second_note.midi_number < self.first_note.midi_number:
+            return 'd'
+        return 'l'
         
     def invert(self, direction='up'):
         """Invert the interval."""
