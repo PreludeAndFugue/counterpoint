@@ -1,5 +1,5 @@
 import unittest
-from counterpoint.counterpoint import (FirstSpecies, Note, Interval,
+from counterpoint.counterpoint import (FirstSpecies, Note, HarmonicInterval,
                                        FirstSpeciesError)
 
 b3 = Note('B', octave=3)
@@ -19,7 +19,7 @@ class TestFirstSpecies(unittest.TestCase):
         self.assertEqual(self.fs.results, [])
         
     def test_create_intervals(self):
-        intervals = [Interval(cf, cm) for cf, cm in zip(self.cf, self.cm)]
+        intervals = [HarmonicInterval(cf, cm) for cf, cm in zip(self.cf, self.cm)]
         self.assertEqual(self.fs.intervals, intervals)
         
     def test_first_interval_correct(self):

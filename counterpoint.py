@@ -28,7 +28,7 @@ class FirstSpecies(object):
     def _create_intervals(self):
         """Return a list of interval objects by comparing the cantus firmus
         with the counter melody."""
-        return [Interval(note_cf, note_cm) for note_cf, note_cm
+        return [HarmonicInterval(note_cf, note_cm) for note_cf, note_cm
                         in zip(self.cantus_firmus, self.counter_melody)]
                         
     def check(self):
@@ -130,8 +130,6 @@ class Note(object):
 
 class Interval(object):
     """A musical interval.
-    
-    An interval can be either harmonic (vertical) or melodic (horizontal).
     """
     name_number = {'C': 1, 'D': 2, 'E': 3, 'F': 4,
                      'G': 5, 'A': 6, 'B': 7}
@@ -144,14 +142,9 @@ class Interval(object):
                  6: {8: 'minor', 9: 'major', 10: 'augmented'},
                  7: {10: 'minor', 11: 'major'}}
     
-    def __init__(self, note1, note2, harmonic=True):
-        self.lower_note, self.upper_note = self._order_notes(note1, note2)
-        self.first_note = note1
-        self.second_note = note2
-        self.harmonic = harmonic
-        self.number = self._number()
-        self.quality = self._quality()
-        self.direction = self._direction()
+    def __init__(self, note1, note2):
+        self.number = self._number(note1, note2)
+        self.quality = self._quality(note1, note2)
         
     def __str__(self):
         return '%s %s between %s and %s' % (self.quality,
@@ -174,46 +167,62 @@ class Interval(object):
         else:
             return note2, note1
         
-    def _number(self):
+    def _number(self, note1, note2):
         """Calculate the interval number.
         
         http://en.wikipedia.org/wiki/Interval_%28music%29#Number
         """
-        octave_diff = self.upper_note.octave - self.lower_note.octave
-        scale_diff = (self.name_number[self.upper_note.name]
-                      - self.name_number[self.lower_note.name])
+        lower, higher = self._order_notes(note1, note2)
+        octave_diff = higher.octave - lower.octave
+        scale_diff = (self.name_number[higher.name]
+                      - self.name_number[lower.name])
         return scale_diff + 7*octave_diff + 1
         
-    def _quality(self):
+    def _quality(self, note1, note2):
         """Calculate the quality of the interval.
         
         http://en.wikipedia.org/wiki/Interval_%28music%29#Quality
         """
+        lower, higher = self._order_notes(note1, note2)
         key_1 = self.number % 7
         key_1 = key_1 if key_1 else 7
-        key_2 = (self.upper_note.midi_number - self.lower_note.midi_number) % 12
-        #print 'key_1', key_1
+        key_2 = (higher.midi_number - lower.midi_number) % 12
         if (key_1, key_2) == (1, 11):
             # this is a hack to account for diminished octaves, fifteenths, etc.
             key_2 = -1
-        return self.qualities[key_1][key_2]
+        return self.qualities[key_1][key_2]    
         
-    def _direction(self):
+    def invert(self, direction='up'):
+        """Invert the interval."""
+        raise NotImplemented
+        
+class HarmonicInterval(Interval):
+    """A harmonic interval is created by playing two notes simultaneously."""
+    def __init__(self, note1, note2):
+        super(HarmonicInterval, self).__init__(note1, note2)
+        self.lower_note, self.upper_note = self._order_notes(note1, note2)
+
+
+class MelodicInterval(Interval):
+    """A melodic interval is created when two notes are played consecutively."""
+    def __init__(self, note1, note2):
+        super(MelodicInterval, self).__init__(note1, note2)
+        self.first_note = note1
+        self.second_note = note2
+        self.direction = self._direction(note1, note2)
+        
+    def _direction(self, note1, note2):
         """Calculate the direction of the interval. Used for melodic intervals.
         
         If the second note is higher than the first, then the direction is 'u'.
         If the second note is lower, then 'd'.
         Otherwise 'l' (for level)
         """
-        if self.second_note.midi_number > self.first_note.midi_number:
+        if note1.midi_number > note2.midi_number:
             return 'u'
-        if self.second_note.midi_number < self.first_note.midi_number:
+        if note1.midi_number < note2.midi_number:
             return 'd'
         return 'l'
-        
-    def invert(self, direction='up'):
-        """Invert the interval."""
-        raise NotImplemented
 
 # some helper functions
 def card_to_ord(n):
