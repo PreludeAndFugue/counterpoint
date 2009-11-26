@@ -22,6 +22,16 @@ class TestFirstSpecies(unittest.TestCase):
         intervals = [HarmonicInterval(cf, cm) for cf, cm in zip(self.cf, self.cm)]
         self.assertEqual(self.fs.harmonic_intervals, intervals)
 
+    def test_cf_intervals(self):
+        """Test that the cantus firmus melodic intervals have been created
+        correctly."""
+        # TODO
+
+    def test_cm_intervals(self):
+        """Test that the counter melody melodic intervals have been created
+        correctly."""
+        # TODO
+
     def test_first_interval_correct(self):
         """The first interval must be a unison, fifth or octave."""
         fs = FirstSpecies([c, g, c], [c5, b, c5])
@@ -36,7 +46,7 @@ class TestFirstSpecies(unittest.TestCase):
                             ' unison, fifth or octave.')))
 
     def test_last_interval_correct(self):
-        pass
+        # TODO
 
     def test_last_interval_incorrect(self):
         """The first interval must be a unison, fifth or octave."""
@@ -59,18 +69,18 @@ class TestFirstSpecies(unittest.TestCase):
         self.assertEqual(str(fs.results[0]),
                          str(FirstSpeciesError('Only the first and last '
                              'intervals may contain a unison')))
-                             
+
     def test_parallel_correct(self):
         fs = FirstSpecies([c, g, c], [c5, b, c5])
         fs.check()
         self.assertEqual(fs.results, [])
-        
+
     def test_parallel_incorrect(self):
         fs = FirstSpecies([c, d], [c5, d5])
         fs.check()
         self.assertEqual(str(fs.results[0]),
                          str(FirstSpeciesError('Parallel octave or fifth')))
-        
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -13,7 +13,7 @@ DURATION_NAMES = {1: 'hemi-demi-semiquaver',
                   128: 'breve'}
 
 class FirstSpeciesError(Exception):
-    """Base class for all errors dedected by the First Species checker."""
+    """Base class for all errors detected by the First Species checker."""
     pass
 
 
@@ -23,6 +23,8 @@ class FirstSpecies(object):
         self.cantus_firmus = cantus_firmus
         self.counter_melody = counter_melody
         self.harmonic_intervals = self._create_harmonic_intervals()
+        self.cf_intervals = self._create_melodic_intervals(cantus_firmus)
+        self.cm_intervals = self._create_melodic_intervals(counter_melody)
         self.results = []
 
     def _create_harmonic_intervals(self):
@@ -42,7 +44,7 @@ class FirstSpecies(object):
         This method calls all the '_rule_*' methods saving the results in """
         rules = [self._rule_first_last_interval,
                  self._rule_unisons,
-                 self._rule_parallel_movement, 
+                 self._rule_parallel_movement,
                  self._rule_hidden_parallel]
         for rule in rules:
             rule()
