@@ -10,7 +10,7 @@ import unittest
 
 def print_problems(problems, error_header):
     """Print the details of all errors or failures in the list of problems.
-    
+
     problems: TestResult.failures or TestResult.errors object
     error_header: header info (string)
     """
@@ -23,21 +23,21 @@ def print_problems(problems, error_header):
         print
 
 def main():
-    module_names = ['rest_test', 'note_test', 'harmonic_interval_test',
-                    'species_test', 'function_test']
+    module_names = ['rest_test', 'note_test', 'interval_test', 'species_test',
+                    'function_test', 'melodic_interval_test', 'harmonic_interval_test']
 
     suite = unittest.TestLoader().loadTestsFromNames(module_names)
     print 'Number of tests: %s' % suite.countTestCases()
-    
+
     results = unittest.TestResult()
     suite.run(results)
-    
+
     if not results.wasSuccessful():
         print_problems(results.errors, 'Errors')
         print_problems(results.failures, 'Failures')
     else:
         print 'All tests passed.'
-    
-    
+
+
 if __name__ == '__main__':
     main()
