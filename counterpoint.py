@@ -22,7 +22,7 @@ class FirstSpecies(object):
     def __init__(self, cantus_firmus, counter_melody):
         self.cantus_firmus = cantus_firmus
         self.counter_melody = counter_melody
-        self.intervals = self._create_harmonic_intervals()
+        self.harmonic_intervals = self._create_harmonic_intervals()
         self.results = []
 
     def _create_harmonic_intervals(self):
@@ -41,7 +41,9 @@ class FirstSpecies(object):
 
         This method calls all the '_rule_*' methods saving the results in """
         rules = [self._rule_first_last_interval,
-                 self._rule_unisons]
+                 self._rule_unisons,
+                 self._rule_parallel_movement, 
+                 self._rule_hidden_parallel]
         for rule in rules:
             rule()
 
@@ -50,24 +52,40 @@ class FirstSpecies(object):
         octave.
         """
         correct_intervals = (1, 5, 8)
-        if self.intervals[0].number not in correct_intervals:
+        if self.harmonic_intervals[0].number not in correct_intervals:
             self.results.append(FirstSpeciesError('The counterpoint must begin '
                 'with a unison, fifth or octave.'))
-        if self.intervals[-1].number not in correct_intervals:
+        if self.harmonic_intervals[-1].number not in correct_intervals:
             self.results.append(FirstSpeciesError('The counterpoint must end '
                 'with a unison, fifth or octave.'))
 
     def _rule_unisons(self):
         """Only the first and last intervals may be unisons."""
-        intervals = self.intervals[1:-1]
+        intervals = self.harmonic_intervals[1:-1]
         for interval in intervals:
             if interval.number == 1:
                 self.results.append(FirstSpeciesError('Only the first and last '
                     'intervals may contain a unison'))
 
+    def _rule_parallel_movement(self):
+        """Avoid parallel fifths or octaves between any two parts."""
+        interval_pairs = [(int1.number, int2.number) for int1, int2 in
+                zip(self.harmonic_intervals[:-1], self.harmonic_intervals[1:])]
+        forbidden_intervals = (1, 5, 8, 12, 15, 19, 23, 27)
+        for int1, int2 in interval_pairs:
+            if int1 == int2 and int1 in forbidden_intervals:
+                self.results.append(FirstSpeciesError('Parallel octave or '
+                    'fifth'))
+
+    def _rule_hidden_parallel(self):
+        """Avoid 'hidden' parallel fifths or octaves: that is, movement by
+        similar motion to a perfect fifth or octave, unless one part
+        (sometimes restricted to the higher of the parts) moves by step."""
+        pass
+
     def pretty(self):
         """A prettified string of the counterpoint."""
-        return [str(i) for i in self.intervals]
+        return [str(i) for i in self.harmonic_intervals]
 
     def print_results(self):
         """Print the results."""
