@@ -47,6 +47,7 @@ class TestFirstSpecies(unittest.TestCase):
 
     def test_last_interval_correct(self):
         # TODO
+        pass
 
     def test_last_interval_incorrect(self):
         """The first interval must be a unison, fifth or octave."""
