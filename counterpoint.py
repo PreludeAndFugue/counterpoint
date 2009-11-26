@@ -22,14 +22,19 @@ class FirstSpecies(object):
     def __init__(self, cantus_firmus, counter_melody):
         self.cantus_firmus = cantus_firmus
         self.counter_melody = counter_melody
-        self.intervals = self._create_intervals()
+        self.intervals = self._create_harmonic_intervals()
         self.results = []
         
-    def _create_intervals(self):
-        """Return a list of interval objects by comparing the cantus firmus
+    def _create_harmonic_intervals(self):
+        """Return a list of HarmonicInterval objects by comparing the cantus firmus
         with the counter melody."""
         return [HarmonicInterval(note_cf, note_cm) for note_cf, note_cm
                         in zip(self.cantus_firmus, self.counter_melody)]
+                        
+    def _create_melodic_intervals(self, melody):
+        """Return a list of MelodicInterval objects from the given melody which
+        is a list of Note objects."""
+        return [MelodicInterval(n1, n2) for n1, n2 in zip(melody[:-1], melody[1:])]
                         
     def check(self):
         """The main method for checking the first species counterpoint.
